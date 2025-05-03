@@ -2,6 +2,7 @@ import express, { Application, Request, Response } from "express";
 const app: Application = express();
 const PORT: number = 3000;
 
+
 // to access .env file
 import * as dotenv from "dotenv";
 dotenv.config();

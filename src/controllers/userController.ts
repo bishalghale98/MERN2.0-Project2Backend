@@ -20,10 +20,11 @@ class AuthController {
       res.status(200).json({
         message: "User register successfully",
       });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({
-        message: "Something went wrong while registering user",
+        message: error.message,
       });
+      return;
     }
   }
 }
