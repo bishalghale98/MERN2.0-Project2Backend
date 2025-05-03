@@ -7,23 +7,13 @@ dotenv.config();
 
 import "./database/connection";
 
-app.get("/", (req: Request, res: Response) => {
-  res.send({
-    message: "Home Page",
-  });
-});
+import userRoute from "./routes/userRoute";
 
-app.get("/about", (req: Request, res: Response) => {
-  res.send({
-    message: "About Page",
-  });
-});
-
-app.get("/contact", (req: Request, res: Response) => {
-  res.send({
-    message: "Contact Page",
-  });
-});
+// for use json type data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+//give access to use the userRoute folder from frontend
+app.use("", userRoute);
 
 app.listen(PORT, () => {
   console.log("server is running at port", PORT);
