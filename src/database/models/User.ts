@@ -1,5 +1,10 @@
 import { Table, Column, Model, DataType } from "sequelize-typescript";
 
+enum UserRole {
+  ADMIN = "admin",
+  CUSTOMER = "customer",
+}
+
 @Table({
   tableName: "users",
   modelName: "User",
@@ -19,7 +24,20 @@ class User extends Model {
   declare username: string;
 
   @Column({
+    type: DataType.ENUM(UserRole.ADMIN, UserRole.CUSTOMER),
+    defaultValue: UserRole.CUSTOMER,
+    validate: {
+      isIn: {
+        args: [[UserRole.ADMIN, UserRole.CUSTOMER]],
+        msg: "Role must be 'admin' or 'customer'",
+      },
+    },
+  })
+  declare role: UserRole;
+
+  @Column({
     type: DataType.STRING,
+    unique: true,
   })
   declare email: string;
 
