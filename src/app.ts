@@ -1,23 +1,27 @@
 import express, { Application, Request, Response } from "express";
-const app: Application = express();
-const PORT: number = 3000;
-
-
-// to access .env file
 import * as dotenv from "dotenv";
-dotenv.config();
-
-// make connection of database
+import userRoute from "./routes/userRoute";
+import adminSeeder from "./adminSeeder";
 import "./database/connection";
 
-import userRoute from "./routes/userRoute";
+// Initialize environment variables
+dotenv.config();
 
-// for use json type data
+// Initialize express app
+const app: Application = express();
+const PORT: number = Number(process.env.PORT) || 3000;
+
+// Middleware to parse JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//give access to use the userRoute folder from frontend
-app.use("", userRoute);
 
+// Run admin seeder
+adminSeeder();
+
+// Routes
+app.use("/", userRoute);
+
+// Start server
 app.listen(PORT, () => {
-  console.log("server is running at port", PORT);
+  console.log(`Server is running on port ${PORT}`);
 });
