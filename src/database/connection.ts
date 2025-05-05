@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
 import * as dotenv from "dotenv";
+import adminSeeder from "../adminSeeder";
 dotenv.config();
 
 const sequelize = new Sequelize({
@@ -22,8 +23,13 @@ sequelize
     console.log(err.message);
   });
 
-sequelize.sync({ force: false }).then(() => {
-  console.log("Table created");
-});
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("Table created");
+  })
+  .then(() => {
+    adminSeeder();
+  });
 
 export default sequelize;

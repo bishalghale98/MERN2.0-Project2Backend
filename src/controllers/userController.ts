@@ -5,37 +5,36 @@ import jwt from "jsonwebtoken";
 
 class AuthController {
   public static async registerUser(req: Request, res: Response): Promise<void> {
-      const { username, email, password, role } = req.body;
-      if (!username || !email || !password) {
-        res.status(400).json({
-          message: "Please provide username, email, password",
-        });
-        return;
-      }
-
-      const [data] = await User.findAll({
-        where: {
-          email: email,
-        },
+    const { username, email, password, role } = req.body;
+    if (!username || !email || !password) {
+      res.status(400).json({
+        message: "Please provide username, email, password",
       });
+      return;
+    }
 
-      if (data) {
-        res.status(409).json({
-          message: "Email already register",
-        });
-        return;
-      }
+    const [data] = await User.findAll({
+      where: {
+        email: email,
+      },
+    });
 
-      await User.create({
-        username,
-        email,
-        password: bcrypt.hashSync(password, 12),
-        role: role,
+    if (data) {
+      res.status(409).json({
+        message: "Email already register",
       });
-      res.status(200).json({
-        message: "User register successfully",
-      });
-    
+      return;
+    }
+
+    await User.create({
+      username,
+      email,
+      password: bcrypt.hashSync(password, 12),
+      role: role,
+    });
+    res.status(200).json({
+      message: "User register successfully",
+    });
   }
 
   public static async loginUser(req: Request, res: Response): Promise<void> {
@@ -77,7 +76,7 @@ class AuthController {
       {
         id: data.id,
       },
-      "hahaha",
+      process.env.SECRET_KEY as string,
       { expiresIn: "20d" }
     );
     res.status(200).json({

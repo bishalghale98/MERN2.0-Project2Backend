@@ -1,4 +1,10 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript";
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  AllowNull,
+} from "sequelize-typescript";
 
 enum ProductStatus {
   ACTIVE = "accepted",
@@ -23,40 +29,41 @@ class Product extends Model {
 
   @Column({
     type: DataType.STRING,
+    allowNull: false,
   })
-  declare name: string;
+  declare productName: string;
 
   @Column({
     type: DataType.TEXT,
   })
-  declare description: string;
+  declare productDescription: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
   })
-  declare price: number;
+  declare productPrice: number;
 
   @Column({
     type: DataType.INTEGER,
   })
-  declare quantity: number;
+  declare productQuantity: number;
 
   @Column({
     type: DataType.STRING,
   })
-  declare brand: string;
+  declare productBrand: string;
 
   @Column({
     type: DataType.STRING,
   })
-  declare image_url: string;
+  declare productImage_url: string;
 
   @Column({
     type: DataType.ENUM("pending", "accepted", "rejected"),
-    allowNull: false,
+    allowNull: true,
     defaultValue: "pending",
   })
-  declare status: ProductStatus;
+  declare productStatus: ProductStatus;
 }
 
 export default Product;
