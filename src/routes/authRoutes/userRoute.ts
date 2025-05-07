@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import AuthController from "../controllers/userController";
-import errorHandler from "../services/catchAsyncError";
+import AuthController from "../../controllers/userController";
+import errorHandler from "../../services/catchAsyncError";
 const router: Router = express.Router();
 
 // userRegister routes

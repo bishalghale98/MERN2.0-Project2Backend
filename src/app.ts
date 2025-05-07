@@ -1,6 +1,8 @@
 import express, { Application, Request, Response } from "express";
 import * as dotenv from "dotenv";
-import userRoute from "./routes/userRoute";
+import userRoute from "./routes/authRoutes/userRoute";
+import productRoute from "./routes/adminRoutes/productRoute";
+
 import "./database/connection";
 
 // Initialize environment variables
@@ -14,9 +16,9 @@ const PORT: number = Number(process.env.PORT) || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Routes
 app.use("/", userRoute);
+app.use("/", productRoute);
 
 // Start server
 app.listen(PORT, () => {

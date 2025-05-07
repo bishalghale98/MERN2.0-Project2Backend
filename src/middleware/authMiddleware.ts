@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../database/models/User";
+import User, { UserRole } from "../database/models/User";
 
 interface AuthRequest extends Request {
   user?: {
@@ -10,11 +10,6 @@ interface AuthRequest extends Request {
     password: string;
     id: string;
   };
-}
-
-enum UserRole {
-  ADMIN = "admin",
-  CUSTOMER = "customer",
 }
 
 class AuthMiddleware {
@@ -64,19 +59,19 @@ class AuthMiddleware {
     );
   }
 
-  restrictTo(...roles:UserRole[]) {
-    return(req:AuthRequest,res:Response, next:NextFunction)=>{
-      let userRole = req.user?.role as UserRole
+  restrictTo(...roles: UserRole[]) {
+    return (req: AuthRequest, res: Response, next: NextFunction) => {
+      let userRole = req.user?.role as UserRole;
+      console.log(userRole);
       if (!roles.includes(userRole)) {
         res.status(403).json({
-          message: "you don't have permission"
-        })
-      }else{
-        next()
+          message: "you don't have permission",
+        });
+      } else {
+        next();
       }
-    }
+    };
   }
 }
 
-
-export default new AuthMiddleware()
+export default new AuthMiddleware();

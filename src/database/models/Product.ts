@@ -3,7 +3,6 @@ import {
   Column,
   Model,
   DataType,
-  AllowNull,
 } from "sequelize-typescript";
 
 enum ProductStatus {
