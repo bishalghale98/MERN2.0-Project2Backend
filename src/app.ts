@@ -2,6 +2,8 @@ import express, { Application, Request, Response } from "express";
 import * as dotenv from "dotenv";
 import userRoute from "./routes/authRoutes/userRoute";
 import productRoute from "./routes/adminRoutes/productRoute";
+import userProductRoute from "./routes/userRoutes/userProductRoute";
+import categoryRoute from "./routes/adminRoutes/categoryRoute"
 
 import "./database/connection";
 
@@ -16,9 +18,14 @@ const PORT: number = Number(process.env.PORT) || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// adminRoutes
 app.use("/", userRoute);
 app.use("/", productRoute);
+app.use("/", categoryRoute);
+
+
+// publicRoutes
+app.use("/", userProductRoute);
 
 // Start server
 app.listen(PORT, () => {

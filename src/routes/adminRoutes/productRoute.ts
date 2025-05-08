@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { UserRole } from "../../database/models/User";
 import authMiddleware from "../../middleware/authMiddleware";
-import productController from "../../controllers/productController";
+import productController from "../../controllers/admin/productController";
 import { upload } from "../../middleware/multerMiddleware";
 
 const router: Router = express.Router();
@@ -18,7 +18,7 @@ router
     [...adminMiddleware, upload.single("image")],
     productController.addProduct
   ) //addProduct
-  .get(adminMiddleware, productController.getProducts); //getAllProducts
+  .get(adminMiddleware, productController.getAllProducts); //getAllProducts
 
 router
   .route("/admin/products/:id")

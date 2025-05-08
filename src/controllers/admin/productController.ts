@@ -1,8 +1,11 @@
 import { Request, response, Response } from "express";
-import Product from "../database/models/Product";
+import Product from "../../database/models/Product";
 import * as fs from "fs";
 import { promisify } from "util";
 import path from "path";
+import { AuthRequest } from "../../middleware/authMiddleware";
+import User from "../../database/models/User";
+import Category from "../../database/models/Category";
 
 const unlinkAsync = promisify(fs.unlink);
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
@@ -13,11 +16,12 @@ interface IProductUpdateRequest {
   productPrice: number;
   productQuantity: number;
   productBrand?: string;
+  categoryId?: string;
 }
 
 class ProductController {
   // add product
-  async addProduct(req: Request, res: Response): Promise<void> {
+  async addProduct(req: AuthRequest, res: Response): Promise<void> {
     try {
       const {
         productName,
@@ -25,12 +29,13 @@ class ProductController {
         productPrice,
         productQuantity,
         productBrand,
+        categoryId,
       } = req.body as IProductUpdateRequest;
 
-      if (!productName || !productDescription || !productPrice) {
+      if (!productName || !productDescription || !productPrice || !categoryId) {
         res.status(400).json({
           message:
-            "Please enter the Product Name, Product Description & Product Price",
+            "Please enter the Product Name, Category, Product Description & Product Price",
         });
       }
 
@@ -63,6 +68,8 @@ class ProductController {
         productQuantity,
         productBrand,
         productImage_url: fileName,
+        userId: req.user?.id,
+        categoryId: categoryId,
       });
 
       res.status(200).json({
@@ -79,9 +86,20 @@ class ProductController {
   }
 
   // getall product
-  async getProducts(req: Request, res: Response): Promise<void> {
+  async getAllProducts(req: Request, res: Response): Promise<void> {
     try {
-      const products = await Product.findAll();
+      const products = await Product.findAll({
+        include: [
+          {
+            model: User,
+            attributes: ["email", "username"],
+          },
+          {
+            model: Category,
+            attributes: ["categoryName", "categorySlug"],
+          },
+        ],
+      });
 
       if (!products || products.length === 0) {
         res.status(404).json({
@@ -96,12 +114,11 @@ class ProductController {
         message: "Products fetched successfully",
         data: products,
       });
-    } catch (error) {
-      console.error("Error fetching products:", error);
+    } catch (error: any) {
       res.status(500).json({
         success: false,
         message: "Internal server error while fetching products",
-        error: error instanceof Error ? error.message : String(error),
+        error: error.message,
       });
     }
   }
@@ -123,6 +140,16 @@ class ProductController {
         where: {
           id,
         },
+        include: [
+          {
+            model: User,
+            attributes: ["username", "email"],
+          },
+          {
+            model: Category,
+            attributes: ["id", "categoryName", "categorySlug"],
+          },
+        ],
       });
 
       if (!product) {
@@ -138,12 +165,12 @@ class ProductController {
         message: "Single Product fetched successfully",
         data: product,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching product:", error);
       res.status(500).json({
         success: false,
         message: "Internal server error",
-        error: error instanceof Error ? error.message : String(error),
+        error: error.message,
       });
     }
   }
@@ -262,7 +289,6 @@ class ProductController {
         success: false,
         message: "Failed to delete product",
       });
-      
     }
   }
 }

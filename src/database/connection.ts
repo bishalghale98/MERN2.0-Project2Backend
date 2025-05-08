@@ -1,6 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import * as dotenv from "dotenv";
 import adminSeeder from "../adminSeeder";
+import Product from "./models/Product";
+import User from "./models/User";
+import Category from "./models/Category";
+import categoryController from "../controllers/admin/categoryController";
 dotenv.config();
 
 const sequelize = new Sequelize({
@@ -30,6 +34,17 @@ sequelize
   })
   .then(() => {
     adminSeeder();
+    categoryController.seedCategory();
   });
+
+// Relationships
+
+// Product & User Relation
+User.hasMany(Product, { foreignKey: "userId" });
+Product.belongsTo(User, { foreignKey: "userId" });
+
+// Product & Category Relation
+Category.hasOne(Product, { foreignKey: "categoryId" });
+Product.belongsTo(Category, { foreignKey: "categoryId" });
 
 export default sequelize;
