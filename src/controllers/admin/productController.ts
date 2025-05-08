@@ -152,7 +152,7 @@ class ProductController {
         ],
       });
 
-      if (!product) {
+      if (!product || product.length == 0) {
         res.status(404).json({
           success: false,
           message: "Product not found",
@@ -250,7 +250,7 @@ class ProductController {
   // deleteProduct
   async deleteProduct(req: Request, res: Response): Promise<void> {
     try {
-      const id = req.params.id;
+      const { id } = req.params;
 
       const product = await Product.findByPk(id);
       if (!product) {
@@ -284,10 +284,9 @@ class ProductController {
         message: "Product successfully deleted",
       });
     } catch (error: any) {
-      console.error("Error in deleteProduct:", error);
       res.status(500).json({
         success: false,
-        message: "Failed to delete product",
+        message: error.message,
       });
     }
   }
