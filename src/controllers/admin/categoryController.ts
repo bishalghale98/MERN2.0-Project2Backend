@@ -40,7 +40,8 @@ class CategoryController {
       console.log("category already seeded");
     }
   }
-
+  
+  // addCategory
   async addCategory(req: Request, res: Response): Promise<void> {
     try {
       const { categoryName, categorySlug } = req.body;
