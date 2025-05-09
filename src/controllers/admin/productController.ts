@@ -143,7 +143,7 @@ class ProductController {
         include: [
           {
             model: User,
-            attributes: ["username", "email"],
+            attributes: ["id", "username", "email"],
           },
           {
             model: Category,
@@ -185,7 +185,8 @@ class ProductController {
         productPrice,
         productQuantity,
         productBrand,
-      } = req.body;
+        categoryId,
+      } = req.body as IProductUpdateRequest;
 
       const oldProduct = await Product.findByPk(id);
 
@@ -225,6 +226,9 @@ class ProductController {
         fileName = oldProduct?.productImage_url as string;
       }
 
+      const finalCategoryId =
+        categoryId ?? (oldProduct?.getDataValue("categoryId") as string);
+
       await Product.update(
         {
           productName,
@@ -233,6 +237,7 @@ class ProductController {
           productQuantity,
           productBrand,
           productImage_url: fileName,
+          categoryId: finalCategoryId,
         },
         { where: { id } }
       );
