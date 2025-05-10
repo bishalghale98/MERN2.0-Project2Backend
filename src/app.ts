@@ -2,7 +2,7 @@ import express, { Application, Request, Response } from "express";
 import * as dotenv from "dotenv";
 import userRoute from "./routes/authRoutes/userRoute";
 import productRoute from "./routes/adminRoutes/productRoute";
-import userProductRoute from "./routes/userRoutes/userProductRoute";
+import publicRoute from "./routes/publicRoute";
 import categoryRoute from "./routes/adminRoutes/categoryRoute"
 
 import "./database/connection";
@@ -20,12 +20,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // adminRoutes
 app.use("/", userRoute);
-app.use("/", productRoute);
-app.use("/", categoryRoute);
+app.use("/admin/products", productRoute);
+app.use("/admin/category", categoryRoute);
 
 
 // publicRoutes
-app.use("/", userProductRoute);
+app.use("/", publicRoute);
 
 // Start server
 app.listen(PORT, () => {

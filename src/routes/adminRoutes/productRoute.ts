@@ -13,7 +13,7 @@ const adminMiddleware = [
 ];
 
 router
-  .route("/admin/products")
+  .route("")
   .post(
     [...adminMiddleware, upload.single("image")],
     productController.addProduct
@@ -21,7 +21,7 @@ router
   .get(adminMiddleware, productController.getAllProducts); //getAllProducts
 
 router
-  .route("/admin/products/:id")
+  .route("/:id")
   .get(adminMiddleware, productController.getProduct) //getSingleProduct
   .patch(
     [...adminMiddleware, upload.single("image")],

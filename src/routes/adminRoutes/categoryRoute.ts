@@ -12,7 +12,13 @@ const adminMiddleware = [
 ];
 
 router
-  .route("/admin/categories")
-  .post(adminMiddleware, categoryController.addCategory);
+  .route("")
+  .post(adminMiddleware, categoryController.addCategory)
+  .get(adminMiddleware, categoryController.getAllCategory);
+
+router
+  .route("/:id")
+  .patch(adminMiddleware, categoryController.updateCategory)
+  .delete(adminMiddleware, categoryController.deleteCategory);
 
 export default router;

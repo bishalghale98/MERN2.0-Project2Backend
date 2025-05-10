@@ -105,8 +105,9 @@ class CategoryController {
   }
 
   async deleteCategory(req: Request, res: Response): Promise<void> {
-    const { id } = req.params;
     try {
+      const { id } = req.params;
+
       const data = await Category.findAll({
         where: { id },
       });
@@ -140,17 +141,25 @@ class CategoryController {
         return;
       }
 
-      const [updatedRowsCount] = await Category.update(
-        { categoryName, categorySlug },
-        { where: { id } }
-      );
+      const oldCategory = await Category.findOne({ where: { id } });
 
-      if (updatedRowsCount === 0) {
-        res
-          .status(404)
-          .json({ message: "Category not found or no changes made." });
+      if (!oldCategory) {
+        res.status(404).json({ message: "Category not found." });
         return;
       }
+
+      // Check if data is actually changing
+      if (
+        oldCategory.categoryName === categoryName &&
+        oldCategory.categorySlug === categorySlug
+      ) {
+        res
+          .status(400)
+          .json({ message: "No changes detected in the category." });
+        return;
+      }
+
+      await Category.update({ categoryName, categorySlug }, { where: { id } });
 
       res.status(200).json({ message: "Category updated successfully." });
     } catch (error) {
