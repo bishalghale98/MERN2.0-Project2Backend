@@ -14,7 +14,7 @@ class Order extends Model {
   declare id: number;
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   declare phoneNumber: number;
