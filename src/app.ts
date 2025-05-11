@@ -3,7 +3,8 @@ import * as dotenv from "dotenv";
 import userRoute from "./routes/authRoutes/userRoute";
 import productRoute from "./routes/adminRoutes/productRoute";
 import publicRoute from "./routes/publicRoute";
-import categoryRoute from "./routes/adminRoutes/categoryRoute"
+import categoryRoute from "./routes/adminRoutes/categoryRoute";
+import cartRoute from "./routes/userRoutes/cartRoute";
 
 import "./database/connection";
 
@@ -22,6 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", userRoute);
 app.use("/admin/products", productRoute);
 app.use("/admin/category", categoryRoute);
+
+// login user
+app.use("/customer/cart", cartRoute);
 
 
 // publicRoutes
