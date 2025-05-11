@@ -5,7 +5,7 @@ import { Table, Column, Model, DataType } from "sequelize-typescript";
   modelName: "Order",
   timestamps: true,
 })
-class Category extends Model {
+class Order extends Model {
   @Column({
     primaryKey: true,
     type: DataType.UUID,
@@ -31,10 +31,16 @@ class Category extends Model {
   declare totalAmount: number;
 
   @Column({
-    type: DataType.ENUM('pending', 'cancelled', 'delivered', 'ontheway', 'preparation'),
-    defaultValue : 'pending'
+    type: DataType.ENUM(
+      "pending",
+      "cancelled",
+      "delivered",
+      "ontheway",
+      "preparation"
+    ),
+    defaultValue: "pending",
   })
   declare orderStatus: number;
 }
 
-export default Category;
+export default Order;
