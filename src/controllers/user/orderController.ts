@@ -11,10 +11,11 @@ import {
 } from "../../types/OrderTypes";
 import Order from "../../database/models/Order";
 import Payment from "../../database/models/Payment";
-import OrderDetails from "../../database/models/OrderDetails";
+
 import axios from "axios";
 import Product from "../../database/models/Product";
 import { json } from "sequelize";
+import OrderDetail from "../../database/models/OrderDetail";
 
 class ExtendedOrder extends Order {
   declare paymentId: string | null;
@@ -60,7 +61,7 @@ class OrderController {
       });
 
       for (var i = 0; i < items.length; i++) {
-        await OrderDetails.create({
+        await OrderDetail.create({
           quantity: items[i].quantity,
           productId: items[i].productId,
           orderId: orderData.id,
@@ -181,11 +182,11 @@ class OrderController {
     });
   }
 
-  async fetchOrderDetails(req: AuthRequest, res: Response): Promise<void> {
+  async fetchOrderDetail(req: AuthRequest, res: Response): Promise<void> {
     const userId = req.user?.id;
     const orderId = req.params.id;
 
-    const orderDetails = await OrderDetails.findAll({
+    const orderDetail = await OrderDetail.findAll({
       where: {
         orderId,
       },
@@ -196,17 +197,17 @@ class OrderController {
       ],
     });
 
-    if (orderDetails.length === 0) {
+    if (orderDetail.length === 0) {
       res.status(404).json({
-        message: "no any orderDetails with that id",
+        message: "no any orderDetail with that id",
         data: [],
       });
       return;
     }
 
     res.status(200).json({
-      message: " orderDetails fetched successfully",
-      data: orderDetails,
+      message: " orderDetail fetched successfully",
+      data: orderDetail,
     });
   }
 
@@ -285,10 +286,9 @@ class OrderController {
         },
       }
     );
-    res.status(200),
-      json({
-        message: `Payment status of orderId ${orderId} updated successfully to ${paymentStatus}`,
-      });
+    res.status(200).json({
+      message: `Payment status of orderId ${orderId} updated successfully to ${paymentStatus}`,
+    });
   }
 
   async deleteOrder(req: Request, res: Response): Promise<void> {
@@ -306,19 +306,22 @@ class OrderController {
     }
 
     if (order) {
-      await Order.destroy({
+      await OrderDetail.destroy({
         where: {
-          id: orderId,
-        },
-      });
-      await Order.destroy({
-        where: {
-          orderId: orderId,
+          orderId,
         },
       });
 
       await Payment.destroy({
-        where: { id: ExtendedOrder.paymentId },
+        where: {
+          id: ExtendedOrder.paymentId,
+        },
+      });
+
+      await Order.destroy({
+        where: {
+          id: orderId,
+        },
       });
     }
     res.status(200).json({

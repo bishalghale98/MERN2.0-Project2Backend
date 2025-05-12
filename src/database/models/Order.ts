@@ -18,6 +18,7 @@ class Order extends Model {
     defaultValue: DataType.UUIDV4,
   })
   declare id: number;
+  
 
   @Column({
     type: DataType.STRING,

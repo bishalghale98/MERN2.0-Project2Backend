@@ -37,17 +37,21 @@ router
 router
   .route("/:id")
   .patch(customerOnly, errorHandler(orderController.cancelMyOrder))
-  .get(customerOnly, errorHandler(orderController.fetchOrderDetails));
+  .get(customerOnly, errorHandler(orderController.fetchOrderDetail));
 
 // Admin Routes
+
+router
+  .route("/admin/payment/:id")
+  .patch(adminOnly, errorHandler(orderController.changePaymentStatus));
+
+
 router
   .route("/admin/:id")
   .patch(adminOnly, errorHandler(orderController.changeOrderStatus))
   .delete(adminOnly, errorHandler(orderController.deleteOrder));
 
-router
-  .route("/admin/payment/:id")
-  .patch(adminOnly, errorHandler(orderController.changePaymentStatus));
+
 
 
 export default router;
