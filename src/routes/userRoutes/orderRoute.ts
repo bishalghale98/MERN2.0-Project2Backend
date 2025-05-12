@@ -12,6 +12,11 @@ const customerOnly = [
   authMiddleware.restrictTo(UserRole.CUSTOMER),
 ];
 
+const adminOnly = [
+  authMiddleware.isAuthenticated,
+  authMiddleware.restrictTo(UserRole.ADMIN),
+];
+
 const customerOrAdmin = [
   authMiddleware.isAuthenticated,
   authMiddleware.restrictTo(UserRole.CUSTOMER, UserRole.ADMIN),
@@ -33,5 +38,16 @@ router
   .route("/:id")
   .patch(customerOnly, errorHandler(orderController.cancelMyOrder))
   .get(customerOnly, errorHandler(orderController.fetchOrderDetails));
+
+// Admin Routes
+router
+  .route("/admin/:id")
+  .patch(adminOnly, errorHandler(orderController.changeOrderStatus))
+  .delete(adminOnly, errorHandler(orderController.deleteOrder));
+
+router
+  .route("/admin/payment/:id")
+  .patch(adminOnly, errorHandler(orderController.changePaymentStatus));
+
 
 export default router;

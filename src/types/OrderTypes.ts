@@ -4,7 +4,7 @@ export enum PaymentMethod {
   Esewa = "esewa",
 }
 
-enum paymentStatus {
+export enum paymentStatus {
   Paid = "paid",
   Unpaid = "unpaid",
 }
