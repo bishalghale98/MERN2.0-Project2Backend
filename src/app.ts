@@ -5,6 +5,7 @@ import productRoute from "./routes/adminRoutes/productRoute";
 import publicRoute from "./routes/publicRoute";
 import categoryRoute from "./routes/adminRoutes/categoryRoute";
 import cartRoute from "./routes/userRoutes/cartRoute";
+import orderRoute from "./routes/userRoutes/orderRoute";
 
 import "./database/connection";
 
@@ -26,7 +27,7 @@ app.use("/admin/category", categoryRoute);
 
 // login user
 app.use("/customer/cart", cartRoute);
-
+app.use("/customer/order", orderRoute);
 
 // publicRoutes
 app.use("/", publicRoute);

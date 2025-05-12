@@ -1,4 +1,10 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript";
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  AllowNull,
+} from "sequelize-typescript";
 
 @Table({
   tableName: "orders",
@@ -14,10 +20,16 @@ class Order extends Model {
   declare id: number;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     allowNull: false,
+    validate: {
+      is: {
+        args: /^\d{10}$/,
+        msg: "Phone number must be exactly 10 digits",
+      },
+    },
   })
-  declare phoneNumber: number;
+  declare phoneNumber: string;
 
   @Column({
     type: DataType.STRING,
