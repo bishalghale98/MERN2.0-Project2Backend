@@ -27,7 +27,7 @@ app.use("/admin/category", categoryRoute);
 
 // login user
 app.use("/customer/cart", cartRoute);
-app.use("/customer/order", orderRoute);
+app.use("/orders", orderRoute);
 
 // publicRoutes
 app.use("/", publicRoute);

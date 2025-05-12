@@ -7,17 +7,31 @@ import orderController from "../../controllers/user/orderController";
 const router: Router = express.Router();
 
 // only for User
-const adminMiddleware = [
+const customerOnly = [
   authMiddleware.isAuthenticated,
   authMiddleware.restrictTo(UserRole.CUSTOMER),
 ];
 
-router
-  .route("/")
-  .post(adminMiddleware, errorHandler(orderController.createOrder));
+const customerOrAdmin = [
+  authMiddleware.isAuthenticated,
+  authMiddleware.restrictTo(UserRole.CUSTOMER, UserRole.ADMIN),
+];
+
+router.route("/").post(customerOnly, errorHandler(orderController.createOrder));
 
 router
   .route("/verify")
-  .post(adminMiddleware, errorHandler(orderController.verifyTransaction));
+  .post(customerOnly, errorHandler(orderController.verifyTransaction));
+
+// customer side route
+
+router
+  .route("/me")
+  .get(customerOrAdmin, errorHandler(orderController.fetchMyOrders));
+
+router
+  .route("/:id")
+  .patch(customerOnly, errorHandler(orderController.cancelMyOrder))
+  .get(customerOnly, errorHandler(orderController.fetchOrderDetails));
 
 export default router;

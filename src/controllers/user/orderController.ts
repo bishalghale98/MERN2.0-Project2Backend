@@ -3,6 +3,7 @@ import { AuthRequest } from "../../middleware/authMiddleware";
 import {
   KhaltiResponse,
   OrderData,
+  OrderStatus,
   PaymentMethod,
   TransactionStatus,
   TransactionVerificationResponse,
@@ -11,6 +12,7 @@ import Order from "../../database/models/Order";
 import Payment from "../../database/models/Payment";
 import OrderDetails from "../../database/models/OrderDetails";
 import axios from "axios";
+import Product from "../../database/models/Product";
 
 class OrderController {
   async createOrder(req: AuthRequest, res: Response): Promise<void> {
@@ -126,7 +128,6 @@ class OrderController {
 
     const data: TransactionVerificationResponse = response.data;
 
-
     if (data.status === TransactionStatus.Completed) {
       await Payment.update(
         { paymentStatus: "paid" },
@@ -144,6 +145,103 @@ class OrderController {
         message: "Payment not verified",
       });
     }
+  }
+
+  // customer side starts here
+  async fetchMyOrders(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user?.id;
+    const orders = await Order.findAll({
+      where: {
+        userId,
+      },
+      include: [
+        {
+          model: Payment,
+        },
+      ],
+    });
+
+    if (orders.length === 0) {
+      res.status(404).json({
+        message: "You haven't ordered anything yet..",
+        data: [],
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: " Order fetched successfully",
+      data: orders,
+    });
+  }
+
+  async fetchOrderDetails(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user?.id;
+    const orderId = req.params.id;
+
+    const orderDetails = await OrderDetails.findAll({
+      where: {
+        orderId,
+      },
+      include: [
+        {
+          model: Product,
+        },
+      ],
+    });
+
+    if (orderDetails.length === 0) {
+      res.status(404).json({
+        message: "no any orderDetails with that id",
+        data: [],
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: " orderDetails fetched successfully",
+      data: orderDetails,
+    });
+  }
+
+  async cancelMyOrder(req: AuthRequest, res: Response): Promise<void> {
+    const userId = req.user?.id;
+    const orderId = req.params.id;
+
+    const order: any = await Order.findAll({
+      where: {
+        userId,
+        id: orderId,
+      },
+    });
+
+    if (
+      order.orderStatus === OrderStatus.Ontheway ||
+      order.orderStatus === OrderStatus.Preparation
+    ) {
+      res.status(200).json({
+        message: "you cannot cancel order when it is in ontheway or prepared",
+      });
+      return;
+    }
+
+    await Order.update(
+      { orderStatus: OrderStatus.Cancelled },
+      {
+        where: {
+          id: orderId,
+        },
+      }
+    );
+    res.status(200).json({
+      message: "Order cancel successfully",
+    });
+  }
+
+  // customer side ends here
+
+  async changeOrderStatus(req: AuthRequest, res: Response): Promise<void> {
+    
   }
 }
 

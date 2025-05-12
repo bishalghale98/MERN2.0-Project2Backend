@@ -2,12 +2,18 @@ import { Request, Response } from "express";
 import Product from "../../database/models/Product";
 import User from "../../database/models/User";
 import Category from "../../database/models/Category";
+import { Op } from "sequelize";
 
 class UserProductController {
   // getAllProducts
   async getAllProducts(req: Request, res: Response): Promise<void> {
     try {
       const products = await Product.findAll({
+        where: {
+        productStatus: {
+          [Op.notIn]: ["pending", "rejected"],
+        },
+      },
         include: [
           {
             model: User,
